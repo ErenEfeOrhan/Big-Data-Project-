@@ -1,3 +1,5 @@
+ï»¿# -*- coding: utf-8 -*-
+
 import csv
 import json
 import os
@@ -40,13 +42,11 @@ def safe_bool(value):
 
 
 def create_event(row):
-    track_id = row.get("track_id", "")
-
     return {
         "event_time": datetime.now(timezone.utc).isoformat(),
         "event_type": "track_stream_event",
         "user_id": f"user_{random.randint(1, 5000)}",
-        "track_id": track_id,
+        "track_id": row.get("track_id"),
         "artists": row.get("artists"),
         "album_name": row.get("album_name"),
         "track_name": row.get("track_name"),
@@ -76,10 +76,10 @@ def wait_for_kafka():
                 bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
                 value_serializer=lambda v: json.dumps(v).encode("utf-8")
             )
-            print("Kafka baðlantýsý baþarýlý.")
+            print("Kafka connection successful.")
             return producer
         except Exception as error:
-            print(f"Kafka hazýr deðil, tekrar denenecek: {error}")
+            print(f"Kafka is not ready yet. Retrying: {error}")
             time.sleep(5)
 
 
@@ -88,9 +88,9 @@ def stream_csv_to_kafka():
     sleep_time = 1 / MESSAGES_PER_SECOND
     total_sent = 0
 
-    print(f"Veri dosyasý: {DATA_FILE}")
+    print(f"Data file: {DATA_FILE}")
     print(f"Kafka topic: {KAFKA_TOPIC}")
-    print(f"Gönderim hýzý: saniyede {MESSAGES_PER_SECOND} mesaj")
+    print(f"Message speed: {MESSAGES_PER_SECOND} messages per second")
 
     while True:
         with open(DATA_FILE, mode="r", encoding="utf-8") as file:
@@ -98,13 +98,12 @@ def stream_csv_to_kafka():
 
             for row in reader:
                 event = create_event(row)
-
                 producer.send(KAFKA_TOPIC, value=event)
                 total_sent += 1
 
                 if total_sent % 100 == 0:
                     producer.flush()
-                    print(f"Toplam gönderilen mesaj: {total_sent}")
+                    print(f"Total sent messages: {total_sent}")
 
                 time.sleep(sleep_time)
 
@@ -113,7 +112,7 @@ def stream_csv_to_kafka():
         if not LOOP_DATASET:
             break
 
-        print("CSV bitti, streaming simülasyonu için baþtan baþlanýyor.")
+        print("CSV finished. Restarting from the beginning for stream simulation.")
 
 
 if __name__ == "__main__":

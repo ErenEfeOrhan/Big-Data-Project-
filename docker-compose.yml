@@ -37,7 +37,7 @@ services:
       KAFKA_TOPIC: spotify_tracks
       DATA_FILE: /app/data/spotify_tracks.csv
       MESSAGES_PER_SECOND: 10
-    command: ["python", "producer.py"]
+    command: ["python", "-u", "producer.py"]
     profiles:
       - producer
 

@@ -1,0 +1,73 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: spotify_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: spotify_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  producer:
+    build:
+      context: ./producer
+    container_name: spotify_producer
+    depends_on:
+      - kafka
+    volumes:
+      - ./data:/app/data
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC: spotify_tracks
+      DATA_FILE: /app/data/spotify_tracks.csv
+      MESSAGES_PER_SECOND: 10
+    command: ["python", "producer.py"]
+    profiles:
+      - producer
+
+  spark:
+    build:
+      context: ./spark
+    container_name: spotify_spark
+    depends_on:
+      - kafka
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - ./:/home/jovyan/work
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+
+  mlflow:
+    image: python:3.11-slim
+    container_name: spotify_mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow:/mlflow
+    command: >
+      bash -c "pip install mlflow==2.14.1 &&
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --default-artifact-root /mlflow/artifacts"

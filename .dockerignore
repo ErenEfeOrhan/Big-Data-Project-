@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Data
+data/*.csv
+data/*.zip
+data/raw/
+data/processed/
+
+# Delta / Spark generated files
+delta/
+spark/checkpoints/
+spark/warehouse/
+
+# MLflow generated files
+mlruns/
+mlflow/artifacts/
+mlflow/*.db
+mlflow/*.sqlite
+mlflow/mlruns/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

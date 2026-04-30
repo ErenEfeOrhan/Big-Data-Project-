@@ -220,10 +220,10 @@ http://localhost:8888
 - Spark Structured Streaming job yazıldı.
 - Kafka'dan gelen veri Delta Lake Bronze katmanına yazıldı.
 - MLflow servisi eklendi.
+- Silver temiz veri katmanı
 
 ## Devam Eden Aşamalar
 
-- Silver temiz veri katmanı
 - Gold feature engineering katmanı
 - EDA notebookları
 - 5 farklı regresyon modeli

@@ -101,7 +101,7 @@ def stream_csv_to_kafka():
                 producer.send(KAFKA_TOPIC, value=event)
                 total_sent += 1
 
-                if total_sent % 100 == 0:
+                if total_sent % MESSAGES_PER_SECOND == 0:
                     producer.flush()
                     print(f"Total sent messages: {total_sent}")
 

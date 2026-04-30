@@ -221,10 +221,10 @@ http://localhost:8888
 - Kafka'dan gelen veri Delta Lake Bronze katmanına yazıldı.
 - MLflow servisi eklendi.
 - Silver temiz veri katmanı
+- Gold feature engineering katmanı
 
 ## Devam Eden Aşamalar
 
-- Gold feature engineering katmanı
 - EDA notebookları
 - 5 farklı regresyon modeli
 - MLflow deney takibi

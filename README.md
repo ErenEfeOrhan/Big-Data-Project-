@@ -211,24 +211,35 @@ Spark notebook ortamı için:
 http://localhost:8888
 ```
 
+## EDA Notebook Çalıştırma
+
+EDA notebook'u Jupyter Lab üzerinden çalıştırılır:
+
+1. Spark container'ının çalıştığından emin olun
+2. Tarayıcıda `http://localhost:8888` adresine gidin
+3. `work/notebooks/4_EDA.ipynb` dosyasını açın
+4. Tüm hücreleri sırasıyla çalıştırın
+
+EDA notebook'u Delta Lake Gold tablosundan veriyi okur ve 12 farklı görselleştirme üretir.
+Grafikler `notebooks/eda_plots/` dizinine kaydedilir.
+
 ## Şu Ana Kadar Tamamlananlar
 
-- Docker ortamı oluşturuldu.
-- Kafka ve Zookeeper servisleri eklendi.
-- Python Kafka Producer yazıldı.
-- Spotify CSV dosyasından Kafka'ya streaming veri gönderildi.
-- Spark Structured Streaming job yazıldı.
-- Kafka'dan gelen veri Delta Lake Bronze katmanına yazıldı.
-- MLflow servisi eklendi.
-- Silver temiz veri katmanı
-- Gold feature engineering katmanı
+- Docker ortamı oluşturuldu (Adım 1) ✅
+- Kafka ve Zookeeper servisleri eklendi (Adım 1) ✅
+- Python Kafka Producer yazıldı (Adım 2) ✅
+- Spotify CSV dosyasından Kafka'ya streaming veri gönderildi (Adım 2) ✅
+- Spark Structured Streaming job yazıldı (Adım 3) ✅
+- Kafka'dan gelen veri Delta Lake Bronze katmanına yazıldı (Adım 3) ✅
+- Silver temiz veri katmanı (Adım 3) ✅
+- Gold feature engineering katmanı (Adım 5 - kısmi) ✅
+- MLflow servisi eklendi ✅
+- EDA notebook'u oluşturuldu (Adım 4) ✅
 
 ## Devam Eden Aşamalar
 
-- EDA notebookları
-- 5 farklı regresyon modeli
-- MLflow deney takibi
-- Dashboard ve grafikler
+- 5 farklı regresyon modeli (Adım 6)
+- MLflow deney takibi (Adım 6)
+- Dashboard ve grafikler (Adım 7)
 - Teknik rapor
 - Sunum
-'@ | Set-Content README.md -Encoding utf8

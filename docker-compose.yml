@@ -62,16 +62,11 @@ services:
     command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
 
   mlflow:
-    image: python:3.11-slim
+    build:
+      context: ./mlflow
+    image: spotify-mlflow:local
     container_name: spotify_mlflow
     ports:
       - "5001:5000"
     volumes:
       - ./mlflow:/mlflow
-    command: >
-      bash -c "pip install mlflow==2.14.1 &&
-      mlflow server
-      --host 0.0.0.0
-      --port 5000
-      --backend-store-uri sqlite:////mlflow/mlflow.db
-      --default-artifact-root /mlflow/artifacts"

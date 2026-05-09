@@ -1,0 +1,6 @@
+Model,rmse,mae,r2,residual_abs_mean
+GBT_Regressor,16.7742,11.7219,0.4196,11.7219
+Random_Forest_Regressor,17.9448,13.3643,0.3357,13.3643
+Decision_Tree_Regressor,18.4734,13.2397,0.296,13.2397
+Linear_Regression,20.787,17.1718,0.1087,17.1718
+Generalized_Linear_Regression,20.787,17.1718,0.1087,17.1718

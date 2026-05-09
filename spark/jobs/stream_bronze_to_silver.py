@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, current_timestamp, to_timestamp, when
 
@@ -7,6 +9,7 @@ from pyspark.sql.functions import col, current_timestamp, to_timestamp, when
 BRONZE_PATH = "/home/jovyan/work/delta/bronze/spotify_tracks"
 SILVER_PATH = "/home/jovyan/work/delta/silver/spotify_tracks"
 CHECKPOINT_PATH = "/home/jovyan/work/spark/checkpoints/silver_spotify_tracks"
+RUN_SECONDS = int(os.getenv("RUN_SECONDS", "0"))
 
 
 spark = (
@@ -30,6 +33,7 @@ bronze_df = (
 silver_df = (
     bronze_df
     .withColumn("event_timestamp", to_timestamp(col("event_time")))
+    .filter(col("event_timestamp").isNotNull())
     .filter(col("track_id").isNotNull())
     .filter(col("track_name").isNotNull())
     .filter(col("artists").isNotNull())
@@ -61,10 +65,13 @@ query = (
 print("Silver streaming started.")
 print(f"Bronze Delta path: {BRONZE_PATH}")
 print(f"Silver Delta path: {SILVER_PATH}")
-print("The stream will run for 60 seconds for this test.")
+if RUN_SECONDS > 0:
+    print(f"The stream will run for {RUN_SECONDS} seconds.")
+    query.awaitTermination(RUN_SECONDS)
+else:
+    print("The stream will run continuously. Press Ctrl+C to stop.")
+    query.awaitTermination()
 
-query.awaitTermination(60)
-
-print("Stopping Silver streaming test.")
+print("Stopping Silver stream.")
 query.stop()
 spark.stop()

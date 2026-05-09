@@ -37,13 +37,20 @@ Delta Lake Bronze Layer
 Silver Layer
         |
         v
-Gold Feature Layer
+Gold Layer
+        |
+        v
+EDA
+        |
+        v
+Feature Engineering
         |
         v
 ML Models + MLflow
         |
         v
 Dashboard / Visualizations
+
 ```
 
 ## Klasör Yapısı
@@ -108,14 +115,16 @@ danceability, energy, loudness, speechiness, acousticness,
 instrumentalness, liveness, valence, tempo, track_genre
 ```
 
-## Docker Servislerini Çalıştırma
+## Docker Servislerini Çalıştırma (Adım 1)
 
-### 1. Docker imajlarını oluştur
+### 1. Docker image'larını oluştur
 
 ```powershell
 docker compose build
 docker compose --profile producer build producer
 ```
+
+Not: `build` komutları sadece image oluşturur, container başlatmaz.
 
 ### 2. Ana servisleri başlat
 
@@ -123,7 +132,15 @@ docker compose --profile producer build producer
 docker compose up -d zookeeper kafka spark mlflow
 ```
 
-### 3. Çalışan container'ları kontrol et
+Not: `producer` servisi `profiles: producer` altında olduğu için bu komutla başlamaz.
+
+### 3. Producer'ı başlat
+
+```powershell
+docker compose --profile producer up -d producer
+```
+
+### 4. Container durumunu kontrol et
 
 ```powershell
 docker ps
@@ -136,15 +153,12 @@ spotify_zookeeper
 spotify_kafka
 spotify_spark
 spotify_mlflow
+spotify_producer
 ```
 
-## Kafka Producer Çalıştırma
+## Kafka Producer Kontrolü (Adım 2)
 
-Producer, CSV dosyasını okuyup Kafka'ya JSON mesajları gönderir.
-
-```powershell
-docker compose --profile producer up -d producer
-```
+Producer, CSV dosyasını okuyup Kafka topic'ine JSON mesaj gönderir.
 
 Producer loglarını kontrol etmek için:
 
@@ -158,70 +172,111 @@ Beklenen örnek çıktı:
 Kafka connection successful.
 Data file: /app/data/spotify_tracks.csv
 Kafka topic: spotify_tracks
-Message speed: 10 messages per second
+Message speed: 50 messages per second
 Total sent messages: 100
 ```
 
-## Bronze Delta Streaming Job Çalıştırma
+Mesaj hızı `MESSAGES_PER_SECOND` environment değişkeniyle ayarlanabilir.
 
-Spark Structured Streaming ile Kafka'dan veri okunur ve Delta Lake Bronze katmanına yazılır.
+## Spark Streaming Job'ları (Adım 3)
+
+3 ayrı terminal açıp job'ları paralel çalıştır:
+
+Terminal 1:
 
 ```powershell
-docker exec -it spotify_spark spark-submit --packages "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,io.delta:delta-spark_2.12:3.2.0" --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" /home/jovyan/work/spark/jobs/stream_kafka_to_bronze.py
+bash scripts/run_bronze_stream.sh
 ```
 
-Başarılı çalışırsa şu klasör oluşur:
+Terminal 2:
+
+```powershell
+bash scripts/run_silver_stream.sh
+```
+
+Terminal 3:
+
+```powershell
+bash scripts/run_gold_stream.sh
+```
+
+Not: Job'lar varsayılan olarak sürekli çalışır. Test için süreli çalıştırmak istersen:
+
+```powershell
+docker exec -e RUN_SECONDS=180 spotify_spark spark-submit --packages "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,io.delta:delta-spark_2.12:3.2.0" --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" /home/jovyan/work/spark/jobs/stream_kafka_to_bronze.py
+```
+
+## Delta Katman Kontrolü
+
+Adım 3 başarılıysa aşağıdaki klasörler oluşur:
 
 ```text
 delta/bronze/spotify_tracks
+delta/silver/spotify_tracks
+delta/gold/spotify_analytics
 ```
 
 Kontrol için:
 
 ```powershell
-dir .\delta\bronze\spotify_tracks
+ls -la delta/bronze/spotify_tracks/_delta_log
+ls -la delta/silver/spotify_tracks/_delta_log
+ls -la delta/gold/spotify_analytics/_delta_log
 ```
 
-Beklenen çıktı içinde şunlar görülür:
+## EDA (Adım 4)
+
+EDA notebook'u Jupyter Lab üzerinden çalıştırılır:
+
+1. Spark container'ının çalıştığından emin ol.
+2. Tarayıcıda `http://localhost:8888` adresine git.
+3. `work/notebooks/4_EDA.ipynb` dosyasını aç.
+4. Hücreleri sırayla çalıştır.
+
+Notebook Silver katmanından veriyi okur ve grafikleri `notebooks/eda_plots/` altına kaydeder.
+
+## Feature Engineering (Adım 5)
+
+`notebooks/5_Feature_Engineering.ipynb` dosyası:
+
+- Silver veriden en az 5 feature üretir.
+- Feature mantıklarını notebook içinde açıklar.
+- Çıktıyı Delta Gold path'ine yazar.
+
+Gold feature path:
 
 ```text
-_delta_log
-part-....snappy.parquet
+delta/gold/spotify_tracks_features
 ```
 
+## Katman Ayrımı (Adım 3 vs Adım 5)
+
+- Adım 3 Gold (`delta/gold/spotify_analytics`): Silver veriden streaming özet/analytics tablo üretir.
+- Adım 5 Gold (`delta/gold/spotify_tracks_features`): ML modeli için feature engineering ile özellik tablosu üretir.
+
 ## Servisleri Durdurma
+
+Streaming job'lar çalıştığı terminalde `Ctrl+C` ile durdurulur.
+
+Tüm container'ları kapatmak için:
 
 ```powershell
 docker compose down
 ```
 
-## MLflow Arayüzü
+## Erişim Adresleri
 
-MLflow çalıştığında tarayıcıdan şu adrese gidilebilir:
-
-```text
-http://localhost:5000
-```
-
-## Jupyter / Spark Arayüzü
-
-Spark notebook ortamı için:
+Spark/Jupyter:
 
 ```text
 http://localhost:8888
 ```
 
-## EDA Notebook Çalıştırma
+MLflow:
 
-EDA notebook'u Jupyter Lab üzerinden çalıştırılır:
-
-1. Spark container'ının çalıştığından emin olun
-2. Tarayıcıda `http://localhost:8888` adresine gidin
-3. `work/notebooks/4_EDA.ipynb` dosyasını açın
-4. Tüm hücreleri sırasıyla çalıştırın
-
-EDA notebook'u Delta Lake Gold tablosundan veriyi okur ve 12 farklı görselleştirme üretir.
-Grafikler `notebooks/eda_plots/` dizinine kaydedilir.
+```text
+http://localhost:5001
+```
 
 ## Şu Ana Kadar Tamamlananlar
 
@@ -229,12 +284,13 @@ Grafikler `notebooks/eda_plots/` dizinine kaydedilir.
 - Kafka ve Zookeeper servisleri eklendi (Adım 1) ✅
 - Python Kafka Producer yazıldı (Adım 2) ✅
 - Spotify CSV dosyasından Kafka'ya streaming veri gönderildi (Adım 2) ✅
-- Spark Structured Streaming job yazıldı (Adım 3) ✅
+- Spark Structured Streaming job'ları yazıldı (Adım 3) ✅
 - Kafka'dan gelen veri Delta Lake Bronze katmanına yazıldı (Adım 3) ✅
-- Silver temiz veri katmanı (Adım 3) ✅
-- Gold feature engineering katmanı (Adım 5 - kısmi) ✅
-- MLflow servisi eklendi ✅
+- Silver temiz veri katmanı oluşturuldu (Adım 3) ✅
+- Gold analytics katmanı oluşturuldu (Adım 3) ✅
 - EDA notebook'u oluşturuldu (Adım 4) ✅
+- Feature engineering notebook'u oluşturuldu ve Gold feature tablosu yazıldı (Adım 5) ✅
+- MLflow servisi eklendi ✅
 
 ## Devam Eden Aşamalar
 

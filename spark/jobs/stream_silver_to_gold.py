@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, current_timestamp, when
+from pyspark.sql.functions import (
+    col,
+    current_timestamp,
+    when,
+    avg,
+    count,
+    round as spark_round,
+)
 
 
 SILVER_PATH = "/home/jovyan/work/delta/silver/spotify_tracks"
-GOLD_PATH = "/home/jovyan/work/delta/gold/spotify_tracks_features"
-CHECKPOINT_PATH = "/home/jovyan/work/spark/checkpoints/gold_spotify_tracks_features"
+GOLD_PATH = "/home/jovyan/work/delta/gold/spotify_analytics"
+CHECKPOINT_PATH = "/home/jovyan/work/spark/checkpoints/gold_spotify_analytics"
+RUN_SECONDS = int(os.getenv("RUN_SECONDS", "0"))
 
 
 spark = (
@@ -29,16 +39,22 @@ silver_df = (
 
 gold_df = (
     silver_df
-    .withColumn("duration_min", col("duration_ms") / 60000)
-    .withColumn("mood_score", (col("valence") + col("energy") + col("danceability")) / 3)
-    .withColumn("audio_intensity", (col("energy") + col("loudness")) / 2)
-    .withColumn("is_high_energy", when(col("energy") >= 0.7, 1).otherwise(0))
-    .withColumn("is_danceable", when(col("danceability") >= 0.7, 1).otherwise(0))
+    .filter(col("track_genre").isNotNull())
+    .filter(col("popularity").isNotNull())
+    .filter(col("energy").isNotNull())
+    .filter(col("danceability").isNotNull())
     .withColumn(
         "tempo_bucket",
         when(col("tempo") < 90, "slow")
         .when((col("tempo") >= 90) & (col("tempo") < 120), "medium")
         .otherwise("fast")
+    )
+    .groupBy("track_genre", "tempo_bucket")
+    .agg(
+        count("*").alias("track_count"),
+        spark_round(avg("popularity"), 2).alias("avg_popularity"),
+        spark_round(avg("energy"), 4).alias("avg_energy"),
+        spark_round(avg("danceability"), 4).alias("avg_danceability"),
     )
     .withColumn("gold_ingestion_time", current_timestamp())
 )
@@ -47,7 +63,7 @@ gold_df = (
 query = (
     gold_df.writeStream
     .format("delta")
-    .outputMode("append")
+    .outputMode("complete")
     .option("checkpointLocation", CHECKPOINT_PATH)
     .trigger(processingTime="10 seconds")
     .start(GOLD_PATH)
@@ -56,10 +72,13 @@ query = (
 print("Gold streaming started.")
 print(f"Silver Delta path: {SILVER_PATH}")
 print(f"Gold Delta path: {GOLD_PATH}")
-print("The stream will run for 60 seconds for this test.")
+if RUN_SECONDS > 0:
+    print(f"The stream will run for {RUN_SECONDS} seconds.")
+    query.awaitTermination(RUN_SECONDS)
+else:
+    print("The stream will run continuously. Press Ctrl+C to stop.")
+    query.awaitTermination()
 
-query.awaitTermination(60)
-
-print("Stopping Gold streaming test.")
+print("Stopping Gold stream.")
 query.stop()
 spark.stop()

@@ -1,5 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
+import os
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, current_timestamp, from_json
 from pyspark.sql.types import (
@@ -13,6 +15,7 @@ KAFKA_TOPIC = "spotify_tracks"
 
 BRONZE_PATH = "/home/jovyan/work/delta/bronze/spotify_tracks"
 CHECKPOINT_PATH = "/home/jovyan/work/spark/checkpoints/bronze_spotify_tracks"
+RUN_SECONDS = int(os.getenv("RUN_SECONDS", "0"))
 
 
 spark = (
@@ -104,10 +107,13 @@ query = (
 print("Bronze streaming started.")
 print(f"Kafka topic: {KAFKA_TOPIC}")
 print(f"Bronze Delta path: {BRONZE_PATH}")
-print("The stream will run for 60 seconds for this test.")
+if RUN_SECONDS > 0:
+    print(f"The stream will run for {RUN_SECONDS} seconds.")
+    query.awaitTermination(RUN_SECONDS)
+else:
+    print("The stream will run continuously. Press Ctrl+C to stop.")
+    query.awaitTermination()
 
-query.awaitTermination(60)
-
-print("Stopping Bronze streaming test.")
+print("Stopping Bronze stream.")
 query.stop()
 spark.stop()

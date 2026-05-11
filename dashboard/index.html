@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Spotify Big Data Pipeline Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+    header {
+      background: linear-gradient(135deg, #1db954, #191414);
+      color: white;
+      padding: 34px;
+      text-align: center;
+    }
+    section {
+      max-width: 1200px;
+      margin: 26px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 22px;
+    }
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      background: white;
+    }
+    img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 3px 6px;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #ecfdf5;
+    }
+    .pill {
+      display: inline-block;
+      padding: 7px 12px;
+      margin: 4px;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Spotify Big Data Pipeline Dashboard</h1>
+    <p>Docker + Kafka + Spark Structured Streaming + Delta Lake + MLflow + Regression Models</p>
+  </header>
+
+  <section>
+    <h2>1. Proje Özeti</h2>
+    <p>
+      Bu dashboard, Spotify Tracks Dataset üzerinde kurulan uçtan uca büyük veri pipeline projesinin çıktılarını özetler.
+      Veri Python Kafka Producer ile Kafka topic'ine gönderilmiş, Spark Structured Streaming ile işlenmiş,
+      Delta Lake Bronze/Silver/Gold katmanlarına yazılmış ve popularity tahmini için regresyon modelleri eğitilmiştir.
+    </p>
+    <span class="pill">Docker</span>
+    <span class="pill">Kafka</span>
+    <span class="pill">Spark</span>
+    <span class="pill">Delta Lake</span>
+    <span class="pill">MLflow</span>
+    <span class="pill">Dashboard</span>
+  </section>
+
+  <section>
+    <h2>2. Model Performans Karşılaştırması</h2>
+    <p>5 regresyon modeli RMSE, MAE ve R2 metrikleri ile karşılaştırılmıştır.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Model Comparison</h3>
+        <img src="assets/ml/model_comparison.png" alt="Model Comparison">
+      </div>
+      <div class="card">
+        <h3>Best Model Feature Importance</h3>
+        <img src="assets/ml/best_model_feature_importance.png" alt="Feature Importance">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Regresyon Sonuçları</h2>
+    <p>Gerçek değer - tahmin grafikleri ve residual dağılımları model performansını yorumlamak için kullanılmıştır.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Linear Regression - Actual vs Predicted</h3>
+        <img src="assets/ml/actual_vs_pred_linear.png" alt="Linear Actual vs Predicted">
+      </div>
+      <div class="card">
+        <h3>Random Forest - Actual vs Predicted</h3>
+        <img src="assets/ml/actual_vs_pred_rf.png" alt="Random Forest Actual vs Predicted">
+      </div>
+      <div class="card">
+        <h3>GBT Regressor - Actual vs Predicted</h3>
+        <img src="assets/ml/actual_vs_pred_gbt.png" alt="GBT Actual vs Predicted">
+      </div>
+      <div class="card">
+        <h3>GBT Regressor - Residual Distribution</h3>
+        <img src="assets/ml/residual_gbt.png" alt="GBT Residual">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>4. EDA Görselleri</h2>
+    <p>EDA aşamasında dağılım, eksik değer, korelasyon, tür analizi ve zaman serisi grafikleri üretilmiştir.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Popularity Distribution</h3>
+        <img src="assets/eda/popularity_distribution.png" alt="Popularity Distribution">
+      </div>
+      <div class="card">
+        <h3>Missing Values</h3>
+        <img src="assets/eda/missing_values.png" alt="Missing Values">
+      </div>
+      <div class="card">
+        <h3>Correlation Matrix</h3>
+        <img src="assets/eda/correlation_matrix.png" alt="Correlation Matrix">
+      </div>
+      <div class="card">
+        <h3>Genre Analysis</h3>
+        <img src="assets/eda/genre_analysis.png" alt="Genre Analysis">
+      </div>
+      <div class="card">
+        <h3>Time Series Trend</h3>
+        <img src="assets/eda/time_series.png" alt="Time Series">
+      </div>
+      <div class="card">
+        <h3>Energy vs Danceability</h3>
+        <img src="assets/eda/energy_vs_danceability.png" alt="Energy vs Danceability">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Delta Lake Katmanları</h2>
+    <table>
+      <tr>
+        <th>Katman</th>
+        <th>Açıklama</th>
+        <th>Path</th>
+      </tr>
+      <tr>
+        <td>Bronze</td>
+        <td>Kafka'dan gelen ham JSON mesajları</td>
+        <td><code>delta/bronze/spotify_tracks</code></td>
+      </tr>
+      <tr>
+        <td>Silver</td>
+        <td>Parse edilmiş ve temizlenmiş veri</td>
+        <td><code>delta/silver/spotify_tracks</code></td>
+      </tr>
+      <tr>
+        <td>Gold Analytics</td>
+        <td>Analitik özetler</td>
+        <td><code>delta/gold/spotify_analytics</code></td>
+      </tr>
+      <tr>
+        <td>Gold Features</td>
+        <td>ML feature tablosu</td>
+        <td><code>delta/gold/spotify_tracks_features</code></td>
+      </tr>
+    </table>
+  </section>
+</body>
+</html>

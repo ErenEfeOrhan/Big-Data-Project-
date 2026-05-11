@@ -299,3 +299,109 @@ http://localhost:5001
 - Dashboard ve grafikler (Adım 7)
 - Teknik rapor
 - Sunum
+
+---
+
+## Final Proje Durumu
+
+Bu proje, Spotify Tracks Dataset kullanılarak hazırlanmış uçtan uca büyük veri pipeline projesidir.
+
+Pipeline bileşenleri:
+
+- Docker ve Docker Compose ile konteynerize ortam
+- Apache Kafka ve Zookeeper ile streaming veri akışı
+- Python Kafka Producer ile CSV verisinin Kafka topic'ine gönderilmesi
+- Apache Spark Structured Streaming ile verinin işlenmesi
+- Delta Lake Bronze, Silver ve Gold katmanları
+- EDA ve görselleştirme çıktıları
+- Feature Engineering
+- 5 farklı regresyon modeli ile popularity tahmini
+- MLflow ile deney takibi
+- Dashboard ve teknik rapor
+
+## Tamamlanan Ana İsterler
+
+- Docker altyapısı kuruldu.
+- Kafka, Zookeeper, Spark, Producer ve MLflow servisleri Docker Compose ile çalıştırıldı.
+- Python Producer, Spotify CSV verisini Kafka topic'ine JSON formatında gönderdi.
+- Spark Structured Streaming ile Kafka verisi okundu.
+- Delta Lake Bronze, Silver, Gold Analytics ve Gold Features katmanları üretildi.
+- EDA notebook'u çalıştırıldı ve grafikler notebooks/eda_plots klasörüne kaydedildi.
+- Feature Engineering notebook'u ile ML için özellik tablosu üretildi.
+- 5 regresyon modeli eğitildi:
+  - Linear Regression
+  - Decision Tree Regressor
+  - Random Forest Regressor
+  - Gradient Boosted Trees Regressor
+  - Generalized Linear Regression
+- Model sonuçları RMSE, MAE ve R2 metrikleriyle karşılaştırıldı.
+- Feature importance ve residual analiz grafikleri üretildi.
+- MLflow deney takibi için servis ve çıktı klasörleri hazırlandı.
+- Dashboard dashboard/index.html olarak oluşturuldu.
+- Teknik rapor reports/technical_report.md olarak oluşturuldu.
+- Final teslim checklist'i reports/final_checklist.md olarak oluşturuldu.
+
+## Dashboard
+
+Dashboard dosyası:
+
+dashboard/index.html
+
+Windows üzerinde açmak için:
+
+start dashboard\index.html
+
+Dashboard içinde:
+
+- 5 model performans karşılaştırması
+- Feature importance grafiği
+- Gerçek vs tahmin grafikleri
+- Residual dağılım grafiği
+- EDA görselleri
+- Delta Lake katman özeti
+
+bulunmaktadır.
+
+## Teknik Rapor
+
+Teknik rapor dosyası:
+
+reports/technical_report.md
+
+Rapor içinde proje amacı, mimari, kullanılan teknolojiler, Kafka streaming, Spark + Delta Lake akışı, EDA, feature engineering, makine öğrenmesi, MLflow, dashboard ve karşılaşılan zorluklar açıklanmıştır.
+
+## ML Sonuçları
+
+Model sonuç dosyası:
+
+reports/step6_regression_results.csv
+
+ML görselleri:
+
+notebooks/ml_plots/
+
+Dashboard için kopyalanan ML görselleri:
+
+dashboard/assets/ml/
+
+## EDA Çıktıları
+
+EDA görselleri:
+
+notebooks/eda_plots/
+
+Dashboard için kopyalanan EDA görselleri:
+
+dashboard/assets/eda/
+
+## Teslim Öncesi Kontrol
+
+Teslimden önce aşağıdaki ekran görüntüleri alınmalıdır:
+
+- docker ps çıktısı
+- Producer logları
+- Spark/Jupyter ekranı
+- MLflow arayüzü: http://localhost:5001
+- Dashboard ekranı: dashboard/index.html
+- GitHub repository son commit ekranı
+

@@ -18,3 +18,4 @@ Ana dosya:
 Açmak için:
 
 start dashboard\index.html
+

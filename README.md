@@ -1,4 +1,4 @@
-# Spotify Big Data Pipeline Project
+﻿# Spotify Big Data Pipeline Project
 
 Bu proje, Spotify Tracks Dataset kullanılarak hazırlanmış uçtan uca büyük veri pipeline projesidir.
 
@@ -404,4 +404,5 @@ Teslimden önce aşağıdaki ekran görüntüleri alınmalıdır:
 - MLflow arayüzü: http://localhost:5001
 - Dashboard ekranı: dashboard/index.html
 - GitHub repository son commit ekranı
+
 

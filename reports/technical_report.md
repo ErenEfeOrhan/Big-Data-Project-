@@ -68,7 +68,7 @@ EDA aşamasında aşağıdaki analizler yapılmıştır:
 - Eksik değer analizi
 - Korelasyon matrisi
 - Tür bazlı analizler
-- Zaman serisi trendleri
+- Tempo bucket analizi
 - Sayısal değişken dağılımları
 - Energy ve danceability ilişkisi
 - Mood ve popularity ilişkisi
@@ -116,7 +116,7 @@ Dashboard dashboard/index.html olarak hazırlanmıştır. Dashboard içinde:
 - Eksik değer analizi
 - Korelasyon matrisi
 - Genre analizi
-- Zaman serisi grafiği
+- Tempo bucket analizi
 - Energy vs danceability grafiği
 
 yer almaktadır.
@@ -131,3 +131,4 @@ yer almaktadır.
 ## 14. Sonuç
 
 Proje kapsamında Docker, Kafka, Spark Structured Streaming, Delta Lake, EDA, Feature Engineering, 5 farklı regresyon modeli, MLflow deney takibi ve dashboard görselleştirme adımları uçtan uca uygulanmıştır. Spotify şarkı özellikleri kullanılarak popularity tahmini için farklı regresyon modelleri karşılaştırılmış ve sonuçlar dashboard ile görsel hale getirilmiştir.
+

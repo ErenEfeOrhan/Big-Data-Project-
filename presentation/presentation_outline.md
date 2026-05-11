@@ -49,7 +49,7 @@ Gösterilecek analizler:
 - Eksik değer analizi
 - Korelasyon matrisi
 - Genre analizi
-- Zaman serisi trendi
+- Tempo bucket analizi
 - Energy vs Danceability
 
 ## 8. Feature Engineering
@@ -100,3 +100,4 @@ gösterilmektedir.
 
 ## 14. Sonuç
 Proje kapsamında uçtan uca büyük veri pipeline kurulmuş, Spotify şarkılarının popularity değerini tahmin etmek için 5 regresyon modeli karşılaştırılmış ve sonuçlar MLflow ile takip edilip dashboard üzerinde görselleştirilmiştir.
+

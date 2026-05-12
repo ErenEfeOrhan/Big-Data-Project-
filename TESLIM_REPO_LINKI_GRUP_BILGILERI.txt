@@ -1,0 +1,23 @@
+﻿GitHub Repo Linki:
+https://github.com/ErenEfeOrhan/Big-Data-Project-.git
+
+Ders:
+Büyük Veri Analizine Giriş
+
+Ödev:
+BVAG Proje Teslimi
+
+Proje:
+Spotify Big Data Pipeline - Docker + Kafka Streaming + Spark + Delta Lake + MLflow + Databricks Dashboard
+
+Veri Seti:
+Spotify Tracks Dataset
+
+Grup Bilgileri:
+220202044 İclal Dere
+220202089 İrem Çınar
+220202045 Nil Tuna Yalçın
+220202086 Eren Efe Orhan
+
+Not:
+Bu TXT dosyası her grup üyesi tarafından ayrı ayrı sisteme yüklenmelidir.

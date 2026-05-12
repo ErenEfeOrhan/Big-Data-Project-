@@ -1,0 +1,30 @@
+﻿FINAL DELIVERY CHECK - 05/12/2026 23:47:54
+
+Project: Spotify Big Data Pipeline
+Docker + Kafka + Spark + Delta Lake + MLflow + Databricks
+
+Group Members:
+220202044 İclal Dere
+220202089 İrem Çınar
+220202045 Nil Tuna Yalçın
+220202086 Eren Efe Orhan
+
+Final Status:
+- Docker services checked
+- Kafka producer live flow checked
+- Bronze/Silver/Gold Delta layers checked
+- EDA notebook executed
+- Feature Engineering notebook executed
+- ML notebook executed
+- 5 regression models compared
+- RMSE, MAE, R2 and residual metrics generated
+- MLflow artifacts generated
+- Databricks dashboard assets prepared
+
+Regression Results:
+Model,rmse,mae,r2,residual_abs_mean
+GBT_Regressor,16.7742,11.7219,0.4196,11.7219
+Random_Forest_Regressor,17.9448,13.3643,0.3357,13.3643
+Decision_Tree_Regressor,18.6151,13.3591,0.2852,13.3591
+Linear_Regression,20.787,17.1718,0.1087,17.1718
+Generalized_Linear_Regression,20.787,17.1718,0.1087,17.1718

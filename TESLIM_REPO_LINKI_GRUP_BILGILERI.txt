@@ -1,4 +1,4 @@
-﻿GitHub Repo Linki:
+GitHub Repo Linki:
 https://github.com/ErenEfeOrhan/Big-Data-Project-.git
 
 Ders:
@@ -13,11 +13,11 @@ Spotify Big Data Pipeline - Docker + Kafka Streaming + Spark + Delta Lake + MLfl
 Veri Seti:
 Spotify Tracks Dataset
 
+DataBricks Dashboard: 
+https://dbc-69375811-406f.cloud.databricks.com/dashboardsv3/01f14d598544131783081ec49cc018d6/published?o=7474650347459609
+
 Grup Bilgileri:
-220202044 İclal Dere
 220202089 İrem Çınar
 220202045 Nil Tuna Yalçın
 220202086 Eren Efe Orhan
-
-Not:
-Bu TXT dosyası her grup üyesi tarafından ayrı ayrı sisteme yüklenmelidir.
+220202044 İclal Dere
